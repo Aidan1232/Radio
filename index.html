@@ -17,10 +17,9 @@
         }
         .buttons-container {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         button {
             background-color: #444;
@@ -97,12 +96,12 @@
 
         <script>
         const stations = {
-            "2DRYFM Tamworth": "https://23093.live.streamtheworld.com/2DRYAAC.aac",
-            "2WEB Bourke": "https://ssl1.viastreaming.net:7230/stream",
-            "ABC Broken Hill": "https://mediaserviceslive.akamaized.net/hls/live/2038262/localbrokenhill/index.m3u8",
-            "Triple J Broken Hill": "https://mediaserviceslive.akamaized.net/hls/live/2038308/triplejnsw/index.m3u8",
-            "2DayFM Sydney": "https://wz2liw.scahw.com.au/live/2day_128.stream/playlist.m3u8",
-            "C91.3 FM": "https://ice9.securenetsystems.net/C913",
+            "2DRYFM (Tamworth)": "https://23093.live.streamtheworld.com/2DRYAAC.aac",
+            "2WEB (Bourke)": "https://ssl1.viastreaming.net:7230/stream",
+            "ABC (Anywhere?)": "https://mediaserviceslive.akamaized.net/hls/live/2038262/localbrokenhill/index.m3u8",
+            "Triple J (Anywhere?)": "https://mediaserviceslive.akamaized.net/hls/live/2038308/triplejnsw/index.m3u8",
+            "2DayFM (Sydney)": "https://wz2liw.scahw.com.au/live/2day_128.stream/playlist.m3u8",
+            "C91.3 FM (Sydney)": "https://ice9.securenetsystems.net/C913",
         };
 
         const stationsDiv = document.getElementById("stations");
@@ -110,6 +109,8 @@
         const volumeSlider = document.getElementById("volume");
         const stopBtn = document.getElementById("stop-btn");
         const cp = document.getElementById("cp");
+
+
 
         let hls = null;  // hls.js instance
 
@@ -139,6 +140,8 @@
             }
             cp.textContent = name;
         }
+
+        let count = 0;
 
         // Create buttons dynamically
         for (const [name, url] of Object.entries(stations)) {
