@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Radio Player with HLS Support</title>
+<style>
+  body {
+    background-color: #222;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 {
+    margin-bottom: 20px;
+  }
+  .buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  button {
+    background-color: #444;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 150px;
+    border-radius: 5px;
+  }
+  button:hover {
+    background-color: #0077cc;
+  }
+  button:active {
+    background-color: #005fa3;
+  }
+  #stop-btn {
+    background-color: red;
+    margin-bottom: 20px;
+  }
+  input[type="range"] {
+    width: 300px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Radio Player</h1>
+
+<div class="buttons-container" id="stations"></div>
+
+<button id="stop-btn">🛑 Stop</button><br />
+
+<label for="volume">🔊 Volume</label><br />
+<input type="range" id="volume" min="0" max="100" value="80" /><br>
+
+<audio id="audio-player" controls style="width: 100%; max-width: 500px; margin-top: 20px;">
+  Your browser does not support the audio element.
+</audio>
+
+<!-- Include hls.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script>
+  const stations = {
+    "2DRY FM 107.7": "https://23093.live.streamtheworld.com/2DRYAAC.aac",
+    "2WEB 100.7": "https://ssl1.viastreaming.net:7230/stream",
+    "ABC Broken Hill": "https://mediaserviceslive.akamaized.net/hls/live/2038262/localbrokenhill/index.m3u8",
+    "Triple J Broken Hill": "https://mediaserviceslive.akamaized.net/hls/live/2038308/triplejnsw/index.m3u8",
+    "2DayFm": "https://wz2liw.scahw.com.au/live/2day_128.stream/playlist.m3u8"
+  };
+
+  const stationsDiv = document.getElementById("stations");
+  const audio = document.getElementById("audio-player");
+  const volumeSlider = document.getElementById("volume");
+  const stopBtn = document.getElementById("stop-btn");
+
+  let hls = null;  // hls.js instance
+
+  // Function to play a stream, handling HLS if needed
+  function playStream(url) {
+    if (hls) {
+      hls.destroy();
+      hls = null;
+    }
+    if (Hls.isSupported() && url.endsWith('.m3u8')) {
+      hls = new Hls();
+      hls.loadSource(url);
+      hls.attachMedia(audio);
+      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+        audio.play();
+      });
+    } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+      // Safari native HLS support
+      audio.src = url;
+      audio.play();
+    } else {
+      // For regular audio streams
+      audio.src = url;
+      audio.play().catch(e => {
+        alert("Unable to play this stream. Your browser may not support it.");
+      });
+    }
+  }
+
+  // Create buttons dynamically
+  for (const [name, url] of Object.entries(stations)) {
+    const btn = document.createElement("button");
+    btn.textContent = name;
+    btn.onclick = () => playStream(url);
+    stationsDiv.appendChild(btn);
+  }
+
+  stopBtn.onclick = () => {
+    if (hls) {
+      hls.destroy();
+      hls = null;
+    }
+    audio.pause();
+    audio.currentTime = 0;
+  };
+
+  volumeSlider.oninput = () => {
+    audio.volume = volumeSlider.value / 100;
+  };
+
+  // Set initial volume
+  audio.volume = volumeSlider.value / 100;
+</script>
+
+</body>
+</html>
