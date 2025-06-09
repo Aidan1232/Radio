@@ -16,7 +16,7 @@
             margin-bottom: 20px;
         }
         .buttons-container {
-            display: flex;
+            display: block;
             justify-content: center;
             gap: 10px;
             margin-bottom: 10px;
@@ -96,12 +96,12 @@
 
         <script>
         const stations = {
-            "2DRYFM (Tamworth)": "https://23093.live.streamtheworld.com/2DRYAAC.aac",
-            "2WEB (Bourke)": "https://ssl1.viastreaming.net:7230/stream",
-            "ABC (Anywhere?)": "https://mediaserviceslive.akamaized.net/hls/live/2038262/localbrokenhill/index.m3u8",
-            "Triple J (Anywhere?)": "https://mediaserviceslive.akamaized.net/hls/live/2038308/triplejnsw/index.m3u8",
-            "2DayFM (Sydney)": "https://wz2liw.scahw.com.au/live/2day_128.stream/playlist.m3u8",
-            "C91.3 FM (Sydney)": "https://ice9.securenetsystems.net/C913",
+            "2DRYFM": "https://23093.live.streamtheworld.com/2DRYAAC.aac",
+            "2WEB": "https://ssl1.viastreaming.net:7230/stream",
+            "ABC": "https://mediaserviceslive.akamaized.net/hls/live/2038262/localbrokenhill/index.m3u8",
+            "Triple J": "https://mediaserviceslive.akamaized.net/hls/live/2038308/triplejnsw/index.m3u8",
+            "2DayFM": "https://wz2liw.scahw.com.au/live/2day_128.stream/playlist.m3u8",
+            "C91.3 FM": "https://ice9.securenetsystems.net/C913",
         };
 
         const stationsDiv = document.getElementById("stations");
@@ -109,7 +109,6 @@
         const volumeSlider = document.getElementById("volume");
         const stopBtn = document.getElementById("stop-btn");
         const cp = document.getElementById("cp");
-
 
 
         let hls = null;  // hls.js instance
@@ -139,16 +138,22 @@
                 });
             }
             cp.textContent = name;
+            document.title = "Radio Player - "+name;
         }
 
         let count = 0;
-
         // Create buttons dynamically
         for (const [name, url] of Object.entries(stations)) {
             const btn = document.createElement("button");
             btn.textContent = name;
             btn.onclick = () => playStream(name,url);
             stationsDiv.appendChild(btn);
+            count++;
+
+            // Insert <br> after every 3 buttons
+            if (count % 3 === 0) {
+                stationsDiv.appendChild(document.createElement("header"));
+            }
         };
 
         stopBtn.onclick = () => {
@@ -159,6 +164,7 @@
             audio.pause();
             audio.currentTime = 0;
             cp.textContent = "Nothing";
+            document.title = "Radio Player";
         };
 
         volumeSlider.oninput = () => {
